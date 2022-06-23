@@ -5,7 +5,7 @@ const svg = d3
   .select('#svg_container')
   .append('svg')
   .attr('width', width)
-  .attr('height', height);
+  .attr('height', height + 60);
 
 d3.json(
   'https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/cyclist-data.json'
@@ -21,36 +21,42 @@ d3.json(
     Year: 1995
   */
 
+  data.forEach((d) => {
+    //console.log(d);
+    const parsed = d.Time.split(':');
+    d.Time = new Date(d.Year, 0, 1, parsed[0], parsed[1]);
+  });
+
   const scaleX = d3
     .scaleLinear()
-    .domain([d3.min(data, (d) => d.Year), d3.max(data, (d) => d.year)])
-    .range([0, width]);
-  const xAxis = d3.axisBottom(scaleX);
+    .range([0, width])
+    .domain([d3.min(data, (d) => d.Year), d3.max(data, (d) => d.Year)]);
+  const xAxis = d3.axisBottom(scaleX).tickFormat(d3.format('d'));
 
   const scaleY = d3
     .scaleTime()
-    .domain([d3.min(data, (d) => d.Time), d3.max(data, (d) => d.Time)])
-    .range([0, height]);
-  const yAxis = d3.axisLeft(scaleY);
+    .range([0, height])
+    .domain([d3.min(data, (d) => d.Time), d3.max(data, (d) => d.Time)]);
+  const yAxis = d3.axisLeft(scaleY).tickFormat(d3.timeFormat('%M:%S'));
 
-  svg
-    .append('g')
-    .attr('transform', `translate(0, ${height - 1})`)
-    .call(xAxis);
-  svg.append('g').call(yAxis);
-
-  data.forEach((d) => {
-    const parsed = d.Time.split(':');
-    d.Time = new Date(d.Year, 0, 1, parsed[0], parsed[1]);
-    console.log(d);
-  });
+  svg.append('g').attr('transform', `translate(60, ${height})`).call(xAxis);
+  svg.append('g').attr('transform', 'translate(60,0)').call(yAxis);
 
   svg
     .selectAll('circle')
     .data(data)
     .enter()
     .append('circle')
-    .attr('cy', (d) => d.Time)
-    .attr('cx', (d) => d.Date)
+    .attr('cy', (d) => scaleY(d.Time))
+    .attr('cx', (d) => scaleX(d.Year) + 66)
     .attr('r', 6);
+
+  svg
+    .selectAll('text')
+    .data(data)
+    .enter()
+    .append('text')
+    .attr('y', (d) => scaleY(d.Time) + 20)
+    .attr('x', (d) => scaleX(d.Year))
+    .text((d) => `${d.Year}, ${d.Time}`);
 });
