@@ -7,6 +7,12 @@ const svg = d3
   .attr('width', width)
   .attr('height', height + 60);
 
+const popup = d3
+  .select('body')
+  .append('div')
+  .attr('class', 'tooltip')
+  .style('opacity', 0);
+
 d3.json(
   'https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/cyclist-data.json'
 ).then((data) => {
@@ -56,16 +62,36 @@ d3.json(
     .attr('r', 6)
     .attr('class', 'dot')
     .attr('data-xvalue', (d) => d.Year)
-    .attr('data-yvalue', (d) => d.Time.toISOString);
+    .attr('data-yvalue', (d) => d.Time.toISOString)
+    .on('mouseover', (e, d) => {
+      const cords = d3.pointer(e);
 
-  svg
-    .selectAll('text')
-    .data(data)
-    .enter()
-    .append('text')
-    .attr('y', (d) => scaleY(d.Time) + 20)
-    .attr('x', (d) => scaleX(d.Year))
-    .text((d) => `${d.Year}, ${d.Time}`);
+      popup
+        .attr('id', 'tooltip')
+        .style('height', '30px')
+        .style('width', 10)
+        .style('opacity', 1)
+        .style('top', cords[1] + 'px')
+        .style('left', cords[0] + 'px')
+        .attr('data-year', d.Year).html(` ${d.Name}
+          <br>
+          Time: ${d.Time}
+          <br>
+          Year: ${d.Year}
+      `);
+    })
+    .on('mouseout', () => {
+      popup.style('opacity', 0);
+    });
+
+  // svg
+  //   .selectAll('text')
+  //   .data(data)
+  //   .enter()
+  //   .append('text')
+  //   .attr('y', (d) => scaleY(d.Time) + 20)
+  //   .attr('x', (d) => scaleX(d.Year))
+  //   .text((d) => `${d.Year}, ${d.Time}`);
 
   const legend = svg.append('g').attr('id', 'legend');
 });
