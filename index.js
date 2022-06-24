@@ -39,8 +39,12 @@ d3.json(
     .domain([d3.min(data, (d) => d.Time), d3.max(data, (d) => d.Time)]);
   const yAxis = d3.axisLeft(scaleY).tickFormat(d3.timeFormat('%M:%S'));
 
-  svg.append('g').attr('transform', `translate(60, ${height})`).call(xAxis);
-  svg.append('g').attr('transform', 'translate(60,0)').call(yAxis);
+  svg
+    .append('g')
+    .attr('transform', `translate(60, ${height})`)
+    .call(xAxis)
+    .attr('id', 'x-axis');
+  svg.append('g').attr('transform', 'translate(60,0)').call(yAxis).attr('id', 'y-axis');
 
   svg
     .selectAll('circle')
@@ -49,7 +53,10 @@ d3.json(
     .append('circle')
     .attr('cy', (d) => scaleY(d.Time))
     .attr('cx', (d) => scaleX(d.Year) + 66)
-    .attr('r', 6);
+    .attr('r', 6)
+    .attr('class', 'dot')
+    .attr('data-xvalue', (d) => d.Year)
+    .attr('data-yvalue', (d) => d.Time.toISOString);
 
   svg
     .selectAll('text')
@@ -59,4 +66,6 @@ d3.json(
     .attr('y', (d) => scaleY(d.Time) + 20)
     .attr('x', (d) => scaleX(d.Year))
     .text((d) => `${d.Year}, ${d.Time}`);
+
+  const legend = svg.append('g').attr('id', 'legend');
 });
