@@ -36,7 +36,7 @@ d3.json(
   const scaleX = d3
     .scaleLinear()
     .range([0, width])
-    .domain([d3.min(data, (d) => d.Year), d3.max(data, (d) => d.Year)]);
+    .domain([d3.min(data, (d) => d.Year - 1), d3.max(data, (d) => d.Year)]);
   const xAxis = d3.axisBottom(scaleX).tickFormat(d3.format('d'));
 
   const scaleY = d3
@@ -57,12 +57,12 @@ d3.json(
     .data(data)
     .enter()
     .append('circle')
+    .attr('cx', (d) => scaleX(d.Year) + 60)
     .attr('cy', (d) => scaleY(d.Time))
-    .attr('cx', (d) => scaleX(d.Year) + 66)
     .attr('r', 6)
     .attr('class', 'dot')
     .attr('data-xvalue', (d) => d.Year)
-    .attr('data-yvalue', (d) => d.Time.toISOString)
+    .attr('data-yvalue', (d) => d.Time.toISOString())
     .on('mouseover', (e, d) => {
       const cords = d3.pointer(e);
 
