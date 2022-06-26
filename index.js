@@ -28,9 +28,9 @@ d3.json(
   */
 
   data.forEach((d) => {
-    //console.log(d);
+    // console.log(d.Time);
     const parsed = d.Time.split(':');
-    d.Time = new Date(2000, 0, 1, parsed[0], parsed[1]);
+    d.Time = new Date(2000, 0, 1, 0, parsed[0], parsed[1]);
   });
 
   const scaleX = d3
