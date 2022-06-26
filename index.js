@@ -73,11 +73,9 @@ d3.json(
         .style('opacity', 1)
         .style('top', cords[1] + 'px')
         .style('left', cords[0] + 'px')
-        .attr('data-year', d.Year).html(` ${d.Name}
-          <br>
-          Time: ${d.Time}
-          <br>
-          Year: ${d.Year}
+        .attr('data-year', d.Year).html(` <b>${d.Name}</b>
+          <p>Time: ${d.Time}</p>
+          <p>Year: ${d.Year}</p>
       `);
     })
     .on('mouseout', () => {
